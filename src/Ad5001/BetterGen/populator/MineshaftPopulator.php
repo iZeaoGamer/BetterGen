@@ -446,4 +446,3 @@ class MineshaftPopulator extends AmountPopulator {
 		return ++$y;
 	}
 }
-?>
