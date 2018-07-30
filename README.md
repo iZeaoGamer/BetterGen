@@ -54,6 +54,6 @@ Welcome user to the home of a new PocketMine World Generator which features 9 ne
 ### Due to legal issues we are not able to include these directly into the repository.
 ### You can get them here: https://aka.ms/behaviorpacktemplate or here https://github.com/dktapps/mcpe-default-addon for an optimised version
 ### The folder has to look like this:
-<img src="https://raw.githubusercontent.com/Ad5001/BetterGen/master/imgs/addon_setup.png" style="width: 500px"></img>
+<img src="https://raw.githubusercontent.com/Ad5001/BetterGen/loottables/imgs/addon_setup.png" style="width: 500px"></img>
 
 All content here is copyrighted (C) Ad5001 2017. Infos about this copyright can be found in the license file.
