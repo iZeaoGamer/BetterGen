@@ -8,8 +8,9 @@
  *    \ \____/\ \____\ \ \__\ \ \__\\ \____\\ \_\   \ \____/\ \____\\ \_\ \_\
  *     \/___/  \/____/  \/__/  \/__/ \/____/ \/_/    \/___/  \/____/ \/_/\/_/
  * Tomorrow's pocketmine generator.
- * @author Ad5001
+ * @author Ad5001 <mail@ad5001.eu>, XenialDan <https://github.com/thebigsmileXD>
  * @link https://github.com/Ad5001/BetterGen
+ * @version 1.1
  */
 
 namespace Ad5001\BetterGen\populator;
@@ -24,25 +25,18 @@ abstract class AmountPopulator extends Populator {
 	/**
 	 * Crosssoftware class for random amount
 	 */
-
 	/**
-	 * Returns the amount based on random
-	 * @param $random Random
+	 * Sets the random addition amount
+	 *
+	 * @param $amount int
 	 */
-	public function getAmount(Random $random) {
-		return $this->baseAmount + $random->nextRange(0, $this->randomAmount + 1);
-	}
-
-	/**
-	 * Returns the base amount
-	 * @return int
-	 */
-	public function getBaseAmount(): int {
-		return $this->baseAmount;
+	public function setRandomAmount(int $amount) {
+		$this->randomAmount = $amount;
 	}
 
 	/**
 	 * Sets the base addition amount
+	 *
 	 * @param $amount int
 	 */
 	public function setBaseAmount(int $amount) {
@@ -50,18 +44,31 @@ abstract class AmountPopulator extends Populator {
 	}
 
 	/**
+	 * Returns the amount based on random
+	 *
+	 * @param Random $random
+	 *
+	 * @return int
+	 */
+	public function getAmount(Random $random) {
+		return $this->baseAmount + $random->nextRange(0, $this->randomAmount + 1);
+	}
+
+	/**
+	 * Returns base amount
+	 *
+	 * @return int
+	 */
+	public function getBaseAmount(): int {
+		return $this->baseAmount;
+	}
+
+	/**
 	 * Returns the random additional amount
+	 *
 	 * @return int
 	 */
 	public function getRandomAmount(): int {
 		return $this->randomAmount;
-	}
-
-	/**
-	 * Sets the random addition amount
-	 * @param $amount int
-	 */
-	public function setRandomAmount(int $amount) {
-		$this->randomAmount = $amount;
 	}
 }

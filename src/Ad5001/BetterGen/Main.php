@@ -8,8 +8,11 @@
  *    \ \____/\ \____\ \ \__\ \ \__\\ \____\\ \_\   \ \____/\ \____\\ \_\ \_\
  *     \/___/  \/____/  \/__/  \/__/ \/____/ \/_/    \/___/  \/____/ \/_/\/_/
  * Tomorrow's pocketmine generator.
- * @author Ad5001
+ * @author Ad5001 <mail@ad5001.eu>, XenialDan <https://github.com/thebigsmileXD>
  * @link https://github.com/Ad5001/BetterGen
+ * @category World Generator
+ * @api 3.0.0
+ * @version 1.1
  */
 
 namespace Ad5001\BetterGen;
@@ -23,23 +26,19 @@ use Ad5001\BetterGen\structure\SakuraTree;
 use Ad5001\BetterGen\structure\Temple;
 use Ad5001\BetterGen\structure\Well;
 use pocketmine\block\Block;
-use pocketmine\block\Chest;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\event\block\BlockBreakEvent;
+use pocketmine\event\level\ChunkLoadEvent;
 use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\item\Item;
-use pocketmine\level\generator\biome\Biome;
-use pocketmine\level\generator\Generator;
+use pocketmine\level\biome\Biome;
+use pocketmine\level\generator\GeneratorManager;
 use pocketmine\level\generator\object\OakTree;
-use pocketmine\level\Position;
-use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\tag\IntTag;
-use pocketmine\nbt\tag\StringTag;
+use pocketmine\level\Level;
+use pocketmine\math\Vector3;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
-use pocketmine\tile\Chest as TileChest;
+use pocketmine\tile\Chest;
 use pocketmine\tile\Tile;
 use pocketmine\utils\Config;
 use pocketmine\utils\Random;
@@ -48,13 +47,13 @@ use pocketmine\utils\TextFormat;
 class Main extends PluginBase implements Listener {
 	const PREFIX = "§l§o§b[§r§l§2Better§aGen§o§b]§r§f ";
 	const SAKURA_FOREST = 100; // Letting some place for future biomes.
-	private static $instance;
-
 
 	/**
-	 * Registers a biome for the normal generator. Normal means(Biome::register) doesn't allow biome to be generated
-	 * @param $id int
-	 * @param $biome Biome
+	 * Registers a biome to betternormal
+	 *
+	 * @param int $id
+	 * @param Biome $biome
+	 *
 	 * @return void
 	 */
 	public static function registerBiome(int $id, Biome $biome) {
@@ -62,30 +61,13 @@ class Main extends PluginBase implements Listener {
 	}
 
 	/**
-	 * Places a looting chest block and creates the corresponding tile
-	 * @param Block $block
-	 * @param $lootfile
-	 */
-	static public function placeLootChest(Block $block, $lootfile) {
-		$block->getLevel()->setBlock($block, $block, true);
-		$nbt = new CompoundTag("", [
-			new StringTag("id", Tile::CHEST),
-			new IntTag("x", (int)$block->x),
-			new IntTag("y", (int)$block->y),
-			new IntTag("z", (int)$block->z),
-			new StringTag("generateLoot", $lootfile)
-		]);
-		$tile = new TileChest($block->getLevel(), $nbt);
-		$tile->spawnToAll();
-	}
-
-	/**
-	 * Called when the plugin enables
+	 * Called when the plugin enales
+	 *
+	 * @return void
 	 */
 	public function onEnable() {
-		self::$instance = $this;
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
-		Generator::addGenerator(BetterNormal::class, "betternormal");
+		GeneratorManager::addGenerator(BetterNormal::class, "betternormal");
 		if ($this->isOtherNS()) $this->getLogger()->warning("Tesseract detected. Note that Tesseract is not up to date with the generation structure and some generation features may be limited or not working");
 		@mkdir($this->getDataFolder());
 		@mkdir($this->getDataFolder() . 'addon');
@@ -93,8 +75,9 @@ class Main extends PluginBase implements Listener {
 	}
 
 	/**
-	 * Check if it's a Tesseract like namespace
-	 * @return    bool
+	 * Checks for tesseract like namespaces. Returns true if thats the case
+	 *
+	 * @return boolean
 	 */
 	public static function isOtherNS() {
 		try {
@@ -105,17 +88,13 @@ class Main extends PluginBase implements Listener {
 	}
 
 	/**
-	 * Called when the plugin disables
-	 */
-	public function onDisable() {
-	}
-
-	/**
-	 * Called when one of the defined commands of the plugin has been called
-	 * @param $sender \pocketmine\command\CommandSender
-	 * @param $cmd \pocketmine\command\Command
-	 * @param $label mixed
-	 * @param $args array
+	 * Called when a command executes
+	 *
+	 * @param CommandSender $sender
+	 * @param Command $cmd
+	 * @param int $label
+	 * @param array $args
+	 *
 	 * @return bool
 	 */
 	public function onCommand(CommandSender $sender, Command $cmd, $label, array $args): bool {
@@ -127,15 +106,15 @@ class Main extends PluginBase implements Listener {
 						break;
 					case 1 : // /createworld <name>
 						$name = $args[0];
-						$generator = Generator::getGenerator("betternormal");
+						$generator = GeneratorManager::getGenerator("betternormal");
 						$generatorName = "betternormal";
 						$seed = $this->generateRandomSeed();
 						$options = [];
 						break;
 					case 2 : // /createworld <name> [generator = betternormal]
 						$name = $args[0];
-						$generator = Generator::getGenerator($args[1]);
-						if (Generator::getGeneratorName($generator) !== strtolower($args[1])) {
+						$generator = GeneratorManager::getGenerator($args[1]);
+						if(GeneratorManager::getGeneratorName($generator) !== strtolower($args[1])) {
 							$sender->sendMessage(self::PREFIX . "§4Could not find generator {$args[1]}. Are you sure it is registered?");
 							return true;
 						}
@@ -145,41 +124,37 @@ class Main extends PluginBase implements Listener {
 						break;
 					case 3 : // /createworld <name> [generator = betternormal] [seed = rand()]
 						$name = $args[0];
-						$generator = Generator::getGenerator($args[1]);
-						if (Generator::getGeneratorName($generator) !== strtolower($args[1])) {
+						$generator = GeneratorManager::getGenerator($args[1]);
+						if(GeneratorManager::getGeneratorName($generator) !== strtolower($args[1])) {
 							$sender->sendMessage(self::PREFIX . "§4Could not find generator {$args[1]}. Are you sure it is registered?");
 							return true;
 						}
 						$generatorName = strtolower($args[1]);
-						if (preg_match("[^\d]", $args[2]) !== false) {
-							$parts = str_split($args[2]);
-							foreach ($parts as $key => $str) {
+						$parts = str_split($args[2]);
+						foreach($parts as $key => $str) {
+							if(is_numeric($str) == false && $str <> '-') {
 								$parts[$key] = ord($str);
 							}
-							$seed = implode("", $parts);
-						} else {
-							$seed = $args[2];
 						}
+						$seed = (int) implode("", $parts);
 						$options = [];
 						break;
 					default : // /createworld <name> [generator = betternormal] [seed = rand()] [options(json)]
 						$name = $args[0];
-						$generator = Generator::getGenerator($args[1]);
-						if (Generator::getGeneratorName($generator) !== strtolower($args[1])) {
+						$generator = GeneratorManager::getGenerator($args[1]);
+						if(GeneratorManager::getGeneratorName($generator) !== strtolower($args[1])) {
 							$sender->sendMessage(self::PREFIX . "§4Could not find generator {$args[1]}. Are you sure it is registered?");
 							return true;
 						}
 						$generatorName = strtolower($args[1]);
 						if ($args[2] == "rand") $args[2] = $this->generateRandomSeed();
-						if (preg_match("[^\d]", $args[2]) !== false) {
-							$parts = str_split($args[2]);
-							foreach ($parts as $key => $str) {
+						$parts = str_split($args[2]);
+						foreach($parts as $key => $str) {
+							if(is_numeric($str) == false && $str <> '-') {
 								$parts[$key] = ord($str);
 							}
-							$seed = implode("", $parts);
-						} else {
-							$seed = $args[2];
 						}
+						$seed = (int) implode("", $parts);
 						unset($args[0], $args[1], $args[2]);
 						$options = json_decode($args[3], true);
 						if (!is_array($options)) {
@@ -198,20 +173,18 @@ class Main extends PluginBase implements Listener {
 				return true;
 				break;
 			case "worldtp":
-				if (!$sender instanceof Player) {
-					$sender->sendMessage(TextFormat::RED . 'You can\'t use this command');
-					return true;
+				if(!$sender instanceof Player) {
+					return false;
 				}
-				/** @var Player $sender */
-				if (isset($args[0])) {
-					if (is_null($this->getServer()->getLevelByName($args[0]))) {
+				if(isset($args[0])) {
+					if(is_null($this->getServer()->getLevelByName($args[0]))) {
 						$this->getServer()->loadLevel($args[0]);
-						if (is_null($this->getServer()->getLevelByName($args[0]))) {
+						if(is_null($this->getServer()->getLevelByName($args[0]))) {
 							$sender->sendMessage("Could not find level {$args[0]}.");
 							return false;
 						}
 					}
-					$sender->teleport(Position::fromObject($sender, $this->getServer()->getLevelByName($args[0])));
+					$sender->teleport(\pocketmine\level\Position::fromObject($sender, $this->getServer()->getLevelByName($args[0])));
 					$sender->sendMessage("§aTeleporting to {$args[0]}...");
 					return true;
 				} else {
@@ -268,7 +241,7 @@ class Main extends PluginBase implements Listener {
 	}
 
 	/**
-	 * Generates a(semi) random seed.
+	 * Generates a (semi) random seed.
 	 * @return int
 	 */
 	public function generateRandomSeed(): int {
@@ -276,12 +249,12 @@ class Main extends PluginBase implements Listener {
 	}
 
 	/**
-	 * Registers a forest type.
-	 * @param $name string
-	 * @param $treeClass string
+	 * Registers a forest from a tree class
+	 *
+	 * @param string $name
+	 * @param string $treeClass
 	 * @param array $infos
 	 * @return bool
-	 * @params $infos Array(temperature, rainfall)
 	 */
 	public function registerForest(string $name, string $treeClass, array $infos): bool {
 		if (!@class_exists($treeClass))
@@ -293,60 +266,28 @@ class Main extends PluginBase implements Listener {
 		return BetterForest::registerForest($name, $treeClass, $infos);
 	}
 
-	/**
-	 * Checks when a player attempts to open a loot chest which is not created yet
-	 * @param PlayerInteractEvent $event
-	 */
-	public function onInteract(PlayerInteractEvent $event) {
-		if (($block = $event->getBlock())->getId() !== Block::CHEST || $event->getAction() !== PlayerInteractEvent::RIGHT_CLICK_BLOCK) return;
-		$this->generateLootChest($block);
-	}
-
-	/**
-	 * Fills a chest with loot
-	 * @param Block $block
-	 * @param Random|null $random
-	 */
-	static public function generateLootChest(Block $block, Random $random = null) {
-		if (!$block instanceof Chest) return;
-		$tile = $block->getLevel()->getTile($block);
-		if (is_null($tile)) {
-			//TODO new tile, but no loot, because we don't know which type of loot chest this is
-			$nbt = new CompoundTag("", [
-				new StringTag("id", Tile::CHEST),
-				new IntTag("x", (int)$block->x),
-				new IntTag("y", (int)$block->y),
-				new IntTag("z", (int)$block->z)
-			]);
-			$tile = new TileChest($block->getLevel(), $nbt);
-			$tile->spawnToAll();
-			return;
+	public function onChunkLoad(ChunkLoadEvent $event) {
+		if($event->getLevel()->getProvider()->getGenerator() === "betternormal") {
+			$chunk = $event->getChunk();
+			for($x = 0; $x < 16; $x++) {
+				for($z = 0; $z < 16; $z++) {
+					for($y = 0; $y <= Level::Y_MAX; $y++) {
+						$id = $chunk->getBlockId($x, $y, $z);
+						/** @var \pocketmine\tile\Chest $tile */
+						$tile = $chunk->getTile($x, $y, $z);
+						if($id === Block::CHEST and $tile === null) {
+							/** @var Chest $tile */
+							$tile = Tile::createTile(Tile::CHEST, $event->getLevel(), Chest::createNBT($pos = new Vector3($chunk->getX() * 16 + $x, $y, $chunk->getZ() * 16 + $z), null)); //TODO: set face correctly
+							$table = new LootTable($config = new Config($this->getDataFolder().'addon\\'.$tile->generateLoot.'.json', Config::DETECT, []));
+							$size = $tile->getInventory()->getSize();
+							$loot = $table->getRandomLoot(null);
+							$items = array_pad($loot, $size, Item::get(Item::AIR));
+							shuffle($items);
+							$tile->getInventory()->setContents($items);
+						}
+					}
+				}
+			}
 		}
-		if (!$tile instanceof TileChest) return;
-		//Check if lootchest (or already generated loot)
-		if (!isset($tile->namedtag->generateLoot)) return;
-		$table = new LootTable($config = new Config(self::getInstance()->getDataFolder() . 'addon\\' . $tile->namedtag->generateLoot . '.json', Config::DETECT, []));
-		$size = $tile->getInventory()->getSize();
-		$loot = $table->getRandomLoot($random);
-		$items = array_pad($loot, $size, Item::get(0));
-		shuffle($items);
-		$tile->getInventory()->setContents($items);
-		unset($tile->namedtag->generateLoot);
-	}
-
-	/**
-	 * @return Main
-	 */
-	static public function getInstance() {
-		return self::$instance;
-	}
-
-	/**
-	 * Checks when a player breaks a loot chest which is not created yet
-	 * @param BlockBreakEvent $event
-	 */
-	public function onBlockBreak(BlockBreakEvent $event) {
-		if (($block = $event->getBlock())->getId() !== Block::CHEST) return;
-		$this->generateLootChest($block);
 	}
 }

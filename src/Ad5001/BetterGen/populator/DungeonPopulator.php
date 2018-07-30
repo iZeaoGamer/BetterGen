@@ -14,38 +14,18 @@
  * @api 3.0.0
  * @version 1.1
  */
-
 namespace Ad5001\BetterGen\populator;
 
-use Ad5001\BetterGen\Main;
+use Ad5001\BetterGen\structure\Dungeons;
 use pocketmine\block\Block;
 use pocketmine\level\ChunkManager;
-use pocketmine\level\generator\object\Tree;
 use pocketmine\level\Level;
 use pocketmine\utils\Random;
 
-class TreePopulator extends AmountPopulator {
-	/** @var Tree[] */
-	static $types = ["pocketmine\\level\\generator\\object\\OakTree", "pocketmine\\level\\generator\\object\\BirchTree", "Ad5001\\BetterGen\\structure\\SakuraTree"
-	];
+class DungeonPopulator extends AmountPopulator {
+
 	/** @var ChunkManager */
 	protected $level;
-	/** @var int */
-	protected $type;
-
-	/**
-	 * Constructs the class
-	 */
-	public function __construct($type = 0) {
-		$this->type = $type;
-		if(Main::isOtherNS()) {
-			self::$types = [
-				"pocketmine\\level\\generator\\normal\\object\\OakTree",
-				"pocketmine\\level\\generator\\normal\\object\\BirchTree",
-				"Ad5001\\BetterGen\\structure\\SakuraTree"
-			];
-		}
-	}
 
 	/**
 	 * Populates the chunk
@@ -60,17 +40,12 @@ class TreePopulator extends AmountPopulator {
 	public function populate(ChunkManager $level, $chunkX, $chunkZ, Random $random) {
 		$this->level = $level;
 		$amount = $this->getAmount($random);
-		for($i = 0; $i < $amount; $i++) {
+		if($amount == 5) { // 1 out of 10 chunks
 			$x = $random->nextRange($chunkX << 4, ($chunkX << 4) + 15);
 			$z = $random->nextRange($chunkZ << 4, ($chunkZ << 4) + 15);
-			$y = $this->getHighestWorkableBlock($x, $z);
-			if ($y === -1) {
-				continue;
-			}
-			$treeC = self::$types[$this->type];
-			/** @var Tree $tree */
-			$tree = new $treeC();
-			$tree->placeObject($level, $x, $y, $z, $random);
+			$y = $random->nextRange(10, $this->getHighestWorkableBlock($x, $z) - 6);
+			$d = new Dungeons();
+			$d->placeObject($level, $x, $y, $z, $random);
 		}
 	}
 
@@ -79,17 +54,18 @@ class TreePopulator extends AmountPopulator {
 	 *
 	 * @param int $x
 	 * @param int $z
+	 *
+	 * @return int
 	 */
 	protected function getHighestWorkableBlock($x, $z) {
-		for($y = Level::Y_MAX - 1; $y > 0; -- $y) {
+		for($y = Level::Y_MAX - 1; $y > 0; --$y) {
 			$b = $this->level->getBlockIdAt($x, $y, $z);
-			if ($b === Block::DIRT or $b === Block::GRASS or $b === Block::PODZOL) {
+			if($b === Block::DIRT or $b === Block::GRASS or $b === Block::PODZOL or $b === Block::SAND or $b === Block::SNOW_BLOCK or $b === Block::SANDSTONE) {
 				break;
-			} elseif ($b !== 0 and $b !== Block::SNOW_LAYER) {
-				return - 1;
+			}elseif($b !== 0 and $b !== Block::SNOW_LAYER and $b !== Block::WATER) {
+				return -1;
 			}
 		}
-
 		return ++$y;
 	}
 }

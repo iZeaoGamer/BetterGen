@@ -8,13 +8,15 @@
  *    \ \____/\ \____\ \ \__\ \ \__\\ \____\\ \_\   \ \____/\ \____\\ \_\ \_\
  *     \/___/  \/____/  \/__/  \/__/ \/____/ \/_/    \/___/  \/____/ \/_/\/_/
  * Tomorrow's pocketmine generator.
- * @author Ad5001
+ * @author Ad5001 <mail@ad5001.eu>, XenialDan <https://github.com/thebigsmileXD>
  * @link https://github.com/Ad5001/BetterGen
+ * @category World Generator
+ * @api 3.0.0
+ * @version 1.1
  */
 
 namespace Ad5001\BetterGen\loot;
 
-use Ad5001\BetterGen\Main;
 use pocketmine\item\Item;
 use pocketmine\item\Tool;
 use pocketmine\utils\Config;
@@ -56,7 +58,7 @@ class LootTable {
 				$val = $rolls["entries"][$this->getRandomWeightedElement($array)];
 				//typecheck
 				if ($val["type"] == "loot_table") {
-					$loottable = new LootTable(new Config(Main::getInstance()->getDataFolder() . 'addon\\' . $val["name"] . ".json", Config::DETECT, []));
+					$loottable = new LootTable(new Config(self::getPluginFolder().'addon\\'.$val["name"].".json", Config::DETECT, []));
 					$items = array_merge($items, $loottable->getRandomLoot($random));
 					unset($loottable);
 				} elseif ($val["type"] == "item") {
@@ -79,10 +81,10 @@ class LootTable {
 												$item = Item::get(Item::RAW_SALMON, $item->getDamage(), $item->getCount(), $item->getCompoundTag());
 												break;
 											case 2:
-												$item = Item::get(Item::CLOWN_FISH, $item->getDamage(), $item->getCount(), $item->getCompoundTag());
+												$item = Item::get(Item::CLOWNFISH, $item->getDamage(), $item->getCount(), $item->getCompoundTag());
 												break;
 											case 3:
-												$item = Item::get(Item::PUFFER_FISH, $item->getDamage(), $item->getCount(), $item->getCompoundTag());
+												$item = Item::get(Item::PUFFERFISH, $item->getDamage(), $item->getCount(), $item->getCompoundTag());
 												break;
 											default:
 												break;
@@ -166,5 +168,12 @@ class LootTable {
 			}
 		}
 		return $name;
+	}
+
+	/**
+	 * @return string
+	 */
+	public static function getPluginFolder() : string {
+		return getcwd().DIRECTORY_SEPARATOR."plugin_data".DIRECTORY_SEPARATOR."BetterGen".DIRECTORY_SEPARATOR;
 	}
 }

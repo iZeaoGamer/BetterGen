@@ -10,11 +10,14 @@
 # @author Ad5001
 # @link https://github.com/Ad5001/BetterGen
 name: BetterGen
-authors: Ad5001, XenialDan
+authors:
+- ad5001
+- XanialDan
+- jasonwynn10
 main: Ad5001\BetterGen\Main
-version: 2.0
+version: 2.1.0
 load: STARTUP
-api: [3.0.0-ALPHA3, 3.0.0-ALPHA5]
+api: [3.0.0]
 commands:
     createworld:
         description: Generates a new world.

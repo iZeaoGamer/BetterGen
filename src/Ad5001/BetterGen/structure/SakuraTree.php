@@ -8,8 +8,11 @@
  *    \ \____/\ \____\ \ \__\ \ \__\\ \____\\ \_\   \ \____/\ \____\\ \_\ \_\
  *     \/___/  \/____/  \/__/  \/__/ \/____/ \/_/    \/___/  \/____/ \/_/\/_/
  * Tomorrow's pocketmine generator.
- * @author Ad5001
+ * @author Ad5001 <mail@ad5001.eu>, XenialDan <https://github.com/thebigsmileXD>
  * @link https://github.com/Ad5001/BetterGen
+ * @category World Generator
+ * @api 3.0.0
+ * @version 1.1
  */
 
 namespace Ad5001\BetterGen\structure;
@@ -439,11 +442,15 @@ class SakuraTree extends Tree {
 		]
 	];
 	const maxPerChunk = 2;
-
-
+	/** @var int */
 	public $trunkHeight = 11;
+	/** @var int */
 	public $leafType;
+	/** @var int */
 	public $leaf2Type;
+	public $realLeafBlock;
+	/** @var Random */
+	private $random;
 
 	/**
 	 * Constructs the class
@@ -458,50 +465,46 @@ class SakuraTree extends Tree {
 	}
 
 	/**
-	 * Builds the tree.
-	 * @param $level \pocketmine\level\ChunkManager
-	 * @param $x int
-	 * @param $y int
-	 * @param $z int
-	 * @param $random $random
+	 * Builds a tree
+	 *
+	 * @param ChunkManager $level
+	 * @param int $x
+	 * @param int $y
+	 * @param int $z
+	 * @param Random $random
+	 *
+	 * @return void
 	 */
 	public function placeObject(ChunkManager $level, $x, $y, $z, Random $random) {
+		$this->random = $random;
 		$percentage = $random->nextBoundedInt(100);
 		if ($percentage > 10) {
 			return;
 		}
 		$trunkHeight = 7 + $random->nextBoundedInt(7);
-
 		$xDiff = $zDiff = 0;
-
 		$direction = $random->nextBoundedInt(3); // Choosing building north east west south
 		switch ($direction) {
 			case 0 :
 				$xDiff = 0;
 				$zDiff = -1;
-				break;
+			break;
 			case 1 :
 				$xDiff = 0;
 				$zDiff = 1;
-				break;
+			break;
 			case 2 :
 				$xDiff = -1;
 				$zDiff = 0;
-				break;
+			break;
 			case 3 :
 				$xDiff = 1;
 				$zDiff = 0;
-				break;
+			break;
 		}
 		list($vParts, $hParts) = self::TRUNK_POS[$trunkHeight];
-
 		$this->setLog($level, $x, $y, $z);
-		list($lastX, $lastY, $lastZ) = [
-			$x,
-			$y,
-			$z
-		];
-
+		list($lastX, $lastY, $lastZ) = [$x, $y, $z];
 		// Filling horizontally
 		if ($hParts > 0) {
 			for ($i = 0; $i < $hParts; $i++) {
@@ -512,13 +515,11 @@ class SakuraTree extends Tree {
 				$this->setLog($level, $lastX, $lastY, $lastZ);
 			}
 		}
-
 		// The middle block
 		$lastX += $xDiff;
 		$lastY++;
 		$lastZ += $zDiff;
 		$this->setLog($level, $lastX, $lastY, $lastZ);
-
 		// Filling vertically
 		if ($vParts > 0) {
 			for ($i = 0; $i < $vParts; $i++) {
@@ -541,39 +542,34 @@ class SakuraTree extends Tree {
 		$branchLen2 = function ($base) {
 			return ceil($base / 2);
 		};
-
 		$xd = $zd = 0;
-
 		for ($dir = 0; $dir < 4; $dir++) {
 			switch ($dir) {
 				case 0 :
 					$xd = 0;
 					$zd = -1;
-					break;
+				break;
 				case 1 :
 					$xd = 0;
 					$zd = 1;
-					break;
+				break;
 				case 2 :
 					$xd = -1;
 					$zd = 0;
-					break;
+				break;
 				case 3 :
 					$xd = 1;
 					$zd = 0;
-					break;
+				break;
 			}
-
 			$stickLen = round($trunkHeight / 3);
 			$stickLen2 = call_user_func($branchLen2, $stickLen);
 			$totalLength = $stickLen + $stickLen2; // Length of the stick
 			$sideLen = $totalLength ** 2; // Side length
-
 			//TODO CHECK WHAT THIS IS SUPPOSED TO BE
 			$numForward = ($totalLength % 2 == 0) ? $totalLength - 1 : $totalLength;
 			//TODO END
 			$lX1 = $lZ1 = $lX = $lZ = 0;
-
 			// First branch part + first leave part
 			for ($i = 1; $i < $stickLen + 1; $i++) {
 				$lX1 = $lastX + ($xd * $i);
@@ -588,7 +584,6 @@ class SakuraTree extends Tree {
 					}
 				$this->setLog($level, $lX1, $lastY, $lZ1);
 			}
-
 			// Second branch part. + second leave part
 			for ($i = 1; $i < $stickLen + 1; $i++) {
 				$lX = $lX1 + ($xd * $i);
@@ -603,7 +598,6 @@ class SakuraTree extends Tree {
 					}
 				$this->setLog($level, $lX, $lastY + 1, $lZ);
 			}
-
 			$lX += $xd;
 			$lZ += $zd;
 			// Leaves falling from the tree forward
@@ -620,35 +614,31 @@ class SakuraTree extends Tree {
 						$this->setLeave($level, $lX, $y, $z, $random);
 				}
 			}
-
 			// continue;
-
 			switch ($dir + 1) {
 				case 4 :
 					$xd2 = 0;
 					$zd2 = -1;
-					break;
+				break;
 				case 1 :
 					$xd2 = 0;
 					$zd2 = 1;
-					break;
+				break;
 				case 2 :
 					$xd2 = -1;
 					$zd2 = 0;
-					break;
+				break;
 				case 3 :
 					$xd2 = 1;
 					$zd2 = 0;
-					break;
+				break;
 			}
-
 			// Leaves falling from the tree diagonally
 			foreach (self::DIAG_LEAVES[$trunkHeight] as $pos) {
 				$numDown = $random->nextBoundedInt(3) + 1;
 				for ($y = $lastY + 1; $y > $lastY - $numDown; $y--)
 					$this->setLeave($level, $lastX + $pos[0], $y, $lastZ + $pos[1], $random);
 			}
-
 			// Additional leaves
 			foreach (self::ADDITIONAL_BLOCKS[$trunkHeight] as $pos) {
 				$this->setLeave($level, $lastX + $pos[0], $lastY + 2, $lastZ + $pos[1], $random);
@@ -657,24 +647,35 @@ class SakuraTree extends Tree {
 	}
 
 	/**
-	 * Fills a log at.
-	 * @param $level pocketmine\level\ChunkManager
-	 * @param $x int
-	 * @param $y int
-	 * @param $z int
+	 * Fills a log
+	 *
+	 * @param ChunkManager $level
+	 * @param int $x
+	 * @param int $y
+	 * @param int $z
+	 *
+	 * @return void
 	 */
 	public function setLog(ChunkManager $level, $x, $y, $z) {
 		$level->setBlockIdAt($x, $y, $z, $this->trunkBlock);
 		$level->setBlockDataAt($x, $y, $z, $this->type);
+		if($this->random->nextBoundedInt(3) == 0) { // Setting a log near.
+			$x += $this->random->nextBoundedInt(3) - 1;
+			$z += $this->random->nextBoundedInt(3) - 1;
+			$level->setBlockIdAt($x, $y, $z, $this->trunkBlock);
+			$level->setBlockDataAt($x, $y, $z, $this->type);
+		}
 	}
 
 	/**
-	 * Fills a leave at.
-	 * @param $level pocketmine\level\ChunkManager
-	 * @param $x int
-	 * @param $y int
-	 * @param $z int
-	 * @param $random pocketmine\utils\Random
+	 * Fills leaves
+	 *
+	 * @param ChunkManager $level
+	 * @param int $x
+	 * @param int $y
+	 * @param int $z
+	 * @param Random $random
+	 * @return void
 	 */
 	public function setLeave(ChunkManager $level, $x, $y, $z, Random $random) {
 		$data = [

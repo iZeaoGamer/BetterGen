@@ -8,22 +8,23 @@
  *    \ \____/\ \____\ \ \__\ \ \__\\ \____\\ \_\   \ \____/\ \____\\ \_\ \_\
  *     \/___/  \/____/  \/__/  \/__/ \/____/ \/_/    \/___/  \/____/ \/_/\/_/
  * Tomorrow's pocketmine generator.
- * @author Ad5001
+ * @author Ad5001 <mail@ad5001.eu>, XenialDan <https://github.com/thebigsmileXD>
  * @link https://github.com/Ad5001/BetterGen
+ * @category World Generator
+ * @api 3.0.0
+ * @version 1.1
  */
 
 namespace Ad5001\BetterGen\structure;
 
-use Ad5001\BetterGen\Main;
 use Ad5001\BetterGen\utils\BuildingUtils;
 use pocketmine\block\Block;
 use pocketmine\level\ChunkManager;
-use pocketmine\level\generator\object\Object;
-use pocketmine\level\Position;
+use pocketmine\level\generator\object\PopulatorObject;
 use pocketmine\math\Vector3;
 use pocketmine\utils\Random;
 
-class Temple extends Object {
+class Temple extends PopulatorObject {
 	const DIRECTION_PLUSX = 0;
 	const DIRECTION_MINX = 1;
 	const DIRECTION_PLUSZ = 2;
@@ -110,16 +111,18 @@ class Temple extends Object {
 		]
 	];
 	/** @var ChunkManager */
-	private $level;
-	private $direction = 0;
+	protected $level;
+	protected $direction = 0;
 
 	/**
-	 * Checks if a temple is placeable
+	 * Checks if a temple is placable
+	 *
 	 * @param ChunkManager $level
-	 * @param $x
-	 * @param $y
-	 * @param $z
+	 * @param int $x
+	 * @param int $y
+	 * @param int $z
 	 * @param Random $random
+	 *
 	 * @return bool
 	 */
 	public function canPlaceObject(ChunkManager $level, $x, $y, $z, Random $random) {
@@ -134,12 +137,15 @@ class Temple extends Object {
 	}
 
 	/**
-	 * Places a temple
+	 * Builds a temple
+	 *
 	 * @param ChunkManager $level
-	 * @param $x
-	 * @param $y
-	 * @param $z
+	 * @param int $x
+	 * @param int $y
+	 * @param int $z
 	 * @param Random $random
+	 *
+	 * @return void
 	 */
 	public function placeObject(ChunkManager $level, $x, $y, $z, Random $random) {
 		// Clearing space...
@@ -888,15 +894,16 @@ class Temple extends Object {
 		$this->placeBlock($x, $y + 9, $z + 2, Block::SANDSTONE_STAIRS, 3);
 	}
 
-
 	/**
 	 * Places a slab
+	 *
 	 * @param $x int
 	 * @param $y int
 	 * @param $z int
 	 * @param $id int
 	 * @param $meta int
 	 * @param bool $top
+	 *
 	 * @return void
 	 */
 	protected function placeSlab($x, $y, $z, $id = 44, $meta = 1, $top = false) {
