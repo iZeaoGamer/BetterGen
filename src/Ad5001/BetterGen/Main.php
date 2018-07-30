@@ -68,11 +68,9 @@ class Main extends PluginBase implements Listener {
 	 */
 	static public function placeLootChest(Block $block, string $lootfile) {
 		$block->getLevel()->setBlock($block, $block, true);
-		$nbt = Chest::createNBT($block);
-		$nbt->setString("generateLoot", $lootfile);
 		/** @var Chest|null $tile */
-		$tile = Chest::createTile(Chest::CHEST, $block->getLevel(), $nbt);
-		$tile->generateLoot = true;
+		$tile = Chest::createTile(Chest::CHEST, $block->getLevel(), Chest::createNBT($block, $block->getDamage()));
+		$tile->generateLoot = $lootfile;
 		$tile->spawnToAll();
 	}
 
@@ -91,7 +89,7 @@ class Main extends PluginBase implements Listener {
 	}
 
 	/**
-	 * Checks for tesseract like namespaces. Returns true if thats the case
+	 * Checks for tesseract like namespaces. Returns true if that's the case
 	 *
 	 * @return boolean
 	 */
@@ -294,7 +292,7 @@ class Main extends PluginBase implements Listener {
 						if($id === Block::CHEST and $tile === null) {
 							/** @var Chest $tile */
 							Tile::createTile(Tile::CHEST, $event->getLevel(), Chest::createNBT(new Vector3($chunk->getX() * 16 + $x, $y, $chunk->getZ() * 16 + $z))); //TODO: set face correctly
-						}elseif($id === Block::CHEST) {
+						}elseif($id === Block::CHEST and isset($tile->generateLoot)) {
 							$table = new LootTable(new Config($this->getDataFolder().'addon'.DIRECTORY_SEPARATOR.$tile->generateLoot.'.json', Config::JSON, []));
 							$size = $tile->getInventory()->getSize();
 							$loot = $table->getRandomLoot();

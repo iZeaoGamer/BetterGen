@@ -53,7 +53,7 @@ class FallenTreePopulator extends AmountPopulator {
 		$this->level = $level;
 		$amount = $this->getAmount($random);
 		$tree = TreePopulator::$types[$this->type];
-		$fallenTree = new \Ad5001\BetterGen\structure\FallenTree(
+		$fallenTree = new FallenTree(
 			new $tree());
 		for($i = 0; $i < $amount; $i++) {
 			$x = $random->nextRange($chunkX * 16, $chunkX * 16 + 15);

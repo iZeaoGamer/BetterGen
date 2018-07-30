@@ -131,7 +131,7 @@ class MineshaftPopulator extends AmountPopulator {
 								$direction2 = 2;
 							if ($direction2 == 1)
 								$direction2 = 4;
-							LootTable::buildLootTable(new Vector3($x + $direction2, $y, $z + $direction), LootTable::LOOT_MINESHAFT, $random);
+							LootTable::buildLootTable(new Vector3($x + $direction2, $y, $z + $direction), LootTable::LOOT_MINESHAFT, $random); // FIXME
 						}
 						if ($random->nextBoundedInt(30) !== 0)
 							$this->generateMineshaftPart($x + 5, $y, $z, $dir, $random);
@@ -172,7 +172,7 @@ class MineshaftPopulator extends AmountPopulator {
 								$direction2 = 2;
 							if ($direction2 == 1)
 								$direction2 = 4;
-							LootTable::buildLootTable(new Vector3($x - $direction2, $y, $z + $direction), LootTable::LOOT_MINESHAFT, $random);
+							LootTable::buildLootTable(new Vector3($x - $direction2, $y, $z + $direction), LootTable::LOOT_MINESHAFT, $random); // FIXME
 						}
 						if ($random->nextBoundedInt(30) !== 0)
 							$this->generateMineshaftPart($x - 5, $y, $z, $dir, $random);
@@ -213,7 +213,7 @@ class MineshaftPopulator extends AmountPopulator {
 								$direction2 = 2;
 							if ($direction2 == 1)
 								$direction2 = 4;
-							LootTable::buildLootTable(new Vector3($x + $direction, $y, $z + $direction2), LootTable::LOOT_MINESHAFT, $random);
+							LootTable::buildLootTable(new Vector3($x + $direction, $y, $z + $direction2), LootTable::LOOT_MINESHAFT, $random); // FIXME
 						}
 						if ($random->nextBoundedInt(30) !== 0)
 							$this->generateMineshaftPart($x, $y, $z + 5, $dir, $random);
@@ -254,7 +254,7 @@ class MineshaftPopulator extends AmountPopulator {
 								$direction2 = 2;
 							if ($direction2 == 1)
 								$direction2 = 4;
-							LootTable::buildLootTable(new Vector3($x + $direction, $y, $z - $direction2), LootTable::LOOT_MINESHAFT, $random);
+							LootTable::buildLootTable(new Vector3($x + $direction, $y, $z - $direction2), LootTable::LOOT_MINESHAFT, $random); // FIXME
 						}
 						if ($random->nextBoundedInt(30) !== 0)
 							$this->generateMineshaftPart($x, $y, $z - 5, $dir, $random);

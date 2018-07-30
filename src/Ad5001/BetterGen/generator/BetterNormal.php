@@ -452,8 +452,11 @@ class BetterNormal extends Generator {
 
 	/**
 	 * Gets the top block (y) on an x and z axes
+	 *
 	 * @param $x int
 	 * @param $z int
+	 *
+	 * @return int
 	 */
 	protected function getHighestWorkableBlock($x, $z) {
 		for($y = Level::Y_MAX - 1; $y > 0; -- $y) {

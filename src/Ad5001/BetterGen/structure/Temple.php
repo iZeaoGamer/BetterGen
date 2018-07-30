@@ -17,99 +17,24 @@
 
 namespace Ad5001\BetterGen\structure;
 
+use Ad5001\BetterGen\Main;
 use Ad5001\BetterGen\utils\BuildingUtils;
 use pocketmine\block\Block;
 use pocketmine\level\ChunkManager;
 use pocketmine\level\generator\object\PopulatorObject;
+use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use pocketmine\utils\Random;
 
 class Temple extends PopulatorObject {
+
 	const DIRECTION_PLUSX = 0;
 	const DIRECTION_MINX = 1;
 	const DIRECTION_PLUSZ = 2;
 	const DIRECTION_MINZ = 3;
-	const THREE_DIAGS = [
-		[
-			3,
-			0
-		],
-		[
-			0,
-			3
-		],
-		[
-			2,
-			1
-		],
-		[
-			1,
-			2
-		],
-		[
-			-3,
-			0
-		],
-		[
-			-2,
-			1
-		],
-		[
-			-1,
-			2
-		],
-		[
-			0,
-			-3
-		],
-		[
-			2,
-			-1
-		],
-		[
-			1,
-			-2
-		],
-		[
-			-2,
-			-1
-		],
-		[
-			-1,
-			-2
-		]
-	];
-	public $overridable = [
-		Block::AIR => true,
-		Block::SAPLING => true,
-		Block::LOG => true,
-		Block::LEAVES => true,
-		Block::STONE => true,
-		Block::DANDELION => true,
-		Block::POPPY => true,
-		Block::SNOW_LAYER => true,
-		Block::LOG2 => true,
-		Block::LEAVES2 => true,
-		Block::CACTUS => true
-	];
-	protected $directions = [
-		[
-			1,
-			1
-		],
-		[
-			1,
-			-1
-		],
-		[
-			-1,
-			-1
-		],
-		[
-			-1,
-			1
-		]
-	];
+	const THREE_DIAGS = [[3, 0], [0, 3], [2, 1], [1, 2], [-3, 0], [-2, 1], [-1, 2], [0, -3], [2, -1], [1, -2], [-2, -1], [-1, -2]];
+	public $overridable = [Block::AIR => true, Block::SAPLING => true, Block::LOG => true, Block::LEAVES => true, Block::STONE => true, Block::DANDELION => true, Block::POPPY => true, Block::SNOW_LAYER => true, Block::LOG2 => true, Block::LEAVES2 => true, Block::CACTUS => true];
+	protected $directions = [[1, 1], [1, -1], [-1, -1], [-1, 1]];
 	/** @var ChunkManager */
 	protected $level;
 	protected $direction = 0;
@@ -158,29 +83,24 @@ class Temple extends PopulatorObject {
 			// Building diagonal sides
 			BuildingUtils::walls($level, $firstPos->add(-$i, $i, -$i), $sndPos->add($i, $i, $i), Block::get(Block::SANDSTONE));
 		}
-
 		// Floor top
 		BuildingUtils::fill($level, new Vector3($x - 5, $y + 4, $z - 5), new Vector3($x + 5, $y + 4, $z + 5), Block::get(Block::SANDSTONE));
 		#for ($xx = $x + 5; $xx >= $x - 5; $xx--)
 		#	for ($zz = $z + 5; $zz >= $z - 5; $zz--)
 		#		$this->placeBlock($xx, $y + 4, $zz);
-
 		// Creating hole
 		BuildingUtils::fill($level, new Vector3($x - 1, $y - 11, $z - 1), new Vector3($x + 1, $y + 4, $z + 1), Block::get(Block::AIR));
 		#for ($xx = $x - 1; $xx <= $x + 1; $xx++)
 		#	for ($yy = $y - 11; $yy <= $y + 4; $yy++)
 		#		for ($zz = $z - 1; $zz <= $z + 1; $zz++)
 		#			$this->placeBlock($xx, $yy, $zz, Block::AIR);
-
 		// Hole walls
 		BuildingUtils::walls($level, new Vector3($x - 2, $y - 1, $z - 2), new Vector3($x + 2, $y - 8, $z + 2), Block::get(Block::SANDSTONE));
-
 		//Floor bottom
 		BuildingUtils::fill($level, new Vector3($x - 9, $y, $z - 9), new Vector3($x + 9, $y, $z + 9), Block::get(Block::SANDSTONE));
 		#for ($xx = $x + 9; $xx >= $x - 9; $xx--)
 		#	for ($zz = $z + 9; $zz >= $z - 9; $zz--)
 		#		$this->placeBlock($xx, $y, $zz);
-
 		// Floor pattern
 		for ($i = -2; $i <= 1; $i++) {//straight
 			$xextra = ($i + 1) % 2;
@@ -198,7 +118,6 @@ class Temple extends PopulatorObject {
 		// Blue hardened clay (center)
 		$this->placeBlock($x, $y, $z, Block::STAINED_HARDENED_CLAY, 11);
 		// Floor pattern end
-
 		// Last step like this
 		for ($xx = $x - 2; $xx <= $x + 2; $xx++) {
 			$this->placeBlock($xx, $y - 9, $z - 2, Block::SANDSTONE, 2);
@@ -208,12 +127,10 @@ class Temple extends PopulatorObject {
 			$this->placeBlock($x - 2, $y - 9, $zz, Block::SANDSTONE, 2);
 			$this->placeBlock($x + 2, $y - 9, $zz, Block::SANDSTONE, 2);
 		}
-
 		foreach (self::THREE_DIAGS as $diagPos) {
 			$this->placeBlock($x + $diagPos[0], $y - 10, $z + $diagPos[1], Block::SANDSTONE, 1);
 			$this->placeBlock($x + $diagPos[0], $y - 11, $z + $diagPos[1], Block::SANDSTONE, 2);
 		}
-
 		// Floor + TNT
 		for ($xx = $x - 2; $xx <= $x + 2; $xx++)
 			for ($zz = $z - 2; $zz <= $z + 2; $zz++)
@@ -222,7 +139,6 @@ class Temple extends PopulatorObject {
 			for ($zz = $z - 1; $zz <= $z + 1; $zz++)
 				$this->placeBlock($xx, $y - 13, $zz, Block::TNT);
 		$this->placeBlock($x, $y - 11, $z, Block::STONE_PRESSURE_PLATE);
-
 		$this->placeBlock($x, $y - 10, $z + 2, Block::AIR);
 		$this->placeBlock($x, $y - 10, $z - 2, Block::AIR);
 		$this->placeBlock($x + 2, $y - 10, $z, Block::AIR);
@@ -236,7 +152,6 @@ class Temple extends PopulatorObject {
 		Main::placeLootChest(Block::get(Block::CHEST, 3, new Position($x, $y - 11, $z - 2, $this->level)), 'loot_tables\\chests\\desert_pyramid');
 		Main::placeLootChest(Block::get(Block::CHEST, 4, new Position($x + 2, $y - 11, $z, $this->level)), 'loot_tables\\chests\\desert_pyramid');
 		Main::placeLootChest(Block::get(Block::CHEST, 5, new Position($x - 2, $y - 11, $z, $this->level)), 'loot_tables\\chests\\desert_pyramid');
-
 		// Entrance is a rectangular parallelepiped
 		switch ($this->direction) {
 			case self::DIRECTION_PLUSX : // x+ (0)
@@ -276,8 +191,7 @@ class Temple extends PopulatorObject {
 				for ($xx = $x + 6; $xx <= $x + 9; $xx++)
 					for ($zz = $z - 2; $zz <= $z + 2; $zz++)
 						$this->placeBlock($xx, $y + 4, $zz);
-				break;
-
+			break;
 			case self::DIRECTION_MINX : // x- (1)
 				// Building towers.
 				$this->placeTower($x - 8, $y, $z + 8, self::DIRECTION_MINX, self::DIRECTION_PLUSZ);
@@ -321,8 +235,7 @@ class Temple extends PopulatorObject {
 				for ($xx = $x - 6; $xx >= $x - 9; $xx--)
 					for ($zz = $z - 2; $zz <= $z + 2; $zz++)
 						$this->placeBlock($xx, $y + 4, $zz);
-				break;
-
+			break;
 			case self::DIRECTION_PLUSZ : // z+ (2)
 				//TODO: Build pillars inside
 				// Building towers.
@@ -362,8 +275,7 @@ class Temple extends PopulatorObject {
 				for ($zz = $z + 6; $zz <= $z + 9; $zz++)
 					for ($xx = $x - 2; $xx <= $x + 2; $xx++)
 						$this->placeBlock($xx, $y + 4, $zz);
-				break;
-
+			break;
 			case self::DIRECTION_MINZ : // z- (3)
 				// Building towers.
 				$this->placeTower($x + 8, $y, $z - 8, self::DIRECTION_MINZ, self::DIRECTION_PLUSX);
@@ -401,7 +313,7 @@ class Temple extends PopulatorObject {
 				for ($zz = $z - 6; $zz >= $z - 9; $zz--)
 					for ($xx = $x - 2; $xx <= $x + 2; $xx++)
 						$this->placeBlock($xx, $y + 4, $zz);
-				break;
+			break;
 		}
 	}
 
@@ -417,7 +329,6 @@ class Temple extends PopulatorObject {
 		$this->level->setBlockIdAt($x, $y, $z, $id);
 		$this->level->setBlockDataAt($x, $y, $z, $meta);
 	}
-
 
 	/**
 	 * Places one of the towers. Out is inversed $direction1, stairs come from inversed $direction2 to $direction2, patterns are on $direction1 and $direction2
@@ -445,19 +356,12 @@ class Temple extends PopulatorObject {
 						$this->placeBlock($x, $y + 1, $z + 1);
 						$this->placeSlab($x, $y + 2, $z + 1);
 						// Pattern
-						foreach ([
-									 1,
-									 2,
-									 4
-								 ] as $h) {
+						foreach ([1, 2, 4] as $h) {
 							$this->placeBlock($x - 1, $y + $h, $z + 2, Block::SANDSTONE, 2);
 							$this->placeBlock($x + 1, $y + $h, $z + 2, Block::SANDSTONE, 2);
 							$this->placeBlock($x, $y + $h, $z + 2, Block::STAINED_HARDENED_CLAY, 1);
 						}
-						foreach ([
-									 3,
-									 5
-								 ] as $h) {
+						foreach ([3, 5] as $h) {
 							$this->placeBlock($x - 1, $y + $h, $z + 2, Block::STAINED_HARDENED_CLAY, 1);
 							$this->placeBlock($x + 1, $y + $h, $z + 2, Block::STAINED_HARDENED_CLAY, 1);
 							$this->placeBlock($x, $y + $h, $z + 2, Block::SANDSTONE, 1);
@@ -468,11 +372,10 @@ class Temple extends PopulatorObject {
 						$this->placeBlock($x - 1, $y + 7, $z + 2, Block::SANDSTONE, 2);
 						$this->placeBlock($x, $y + 7, $z + 2, Block::SANDSTONE, 2);
 						$this->placeBlock($x + 1, $y + 7, $z + 2, Block::SANDSTONE, 2);
-
 						// Building entrance to second floor. //TODO
 						BuildingUtils::fill($this->level, new Vector3($x - 9, $y + 5, $z - 4), new Vector3($x - 7, $y + 7, $z - 5), Block::get(Block::SANDSTONE, 2));
 						BuildingUtils::fill($this->level, new Vector3($x - 8, $y + 5, $z - 4), new Vector3($x - 8, $y + 6, $z - 5), Block::get(Block::AIR));
-						break;
+					break;
 					case self::DIRECTION_MINZ :
 						for ($zz = $z - 1; $zz <= $z; $zz++) {
 							$this->placeBlock($x - 1, $y + 1, $zz);
@@ -482,19 +385,12 @@ class Temple extends PopulatorObject {
 						$this->placeBlock($x, $y + 1, $z - 1);
 						$this->placeSlab($x, $y + 2, $z - 1);
 						// Pattern
-						foreach ([
-									 1,
-									 2,
-									 4
-								 ] as $h) {
+						foreach ([1, 2, 4] as $h) {
 							$this->placeBlock($x - 1, $y + $h, $z - 2, Block::SANDSTONE, 2);
 							$this->placeBlock($x + 1, $y + $h, $z - 2, Block::SANDSTONE, 2);
 							$this->placeBlock($x, $y + $h, $z - 2, Block::STAINED_HARDENED_CLAY, 1);
 						}
-						foreach ([
-									 3,
-									 5
-								 ] as $h) {
+						foreach ([3, 5] as $h) {
 							$this->placeBlock($x - 1, $y + $h, $z - 2, Block::STAINED_HARDENED_CLAY, 1);
 							$this->placeBlock($x + 1, $y + $h, $z - 2, Block::STAINED_HARDENED_CLAY, 1);
 							$this->placeBlock($x, $y + $h, $z - 2, Block::SANDSTONE, 1);
@@ -505,13 +401,11 @@ class Temple extends PopulatorObject {
 						$this->placeBlock($x - 1, $y + 7, $z - 2, Block::SANDSTONE, 2);
 						$this->placeBlock($x, $y + 7, $z - 2, Block::SANDSTONE, 2);
 						$this->placeBlock($x + 1, $y + 7, $z - 2, Block::SANDSTONE, 2);
-						break;
+					break;
 				}
-
 				// Building entrance to second floor. //TODO
 				BuildingUtils::fill($this->level, new Vector3($x - 9, $y + 5, $z + 4), new Vector3($x - 7, $y + 7, $z + 5), Block::get(Block::SANDSTONE, 2));
 				BuildingUtils::fill($this->level, new Vector3($x - 8, $y + 5, $z + 4), new Vector3($x - 8, $y + 6, $z + 5), Block::get(Block::AIR));
-
 				// Finishing stairs system
 				$this->placeBlock($x - 2, $y + 3, $z, Block::SANDSTONE_STAIRS, 1);
 				$this->placeBlock($x - 3, $y + 4, $z, Block::SANDSTONE_STAIRS, 1);
@@ -520,21 +414,13 @@ class Temple extends PopulatorObject {
 				$this->placeBlock($x - 2, $y + 6, $z, Block::AIR);
 				// Making path from stairs to first floor.
 				BuildingUtils::fill($this->level, new Vector3($x - 3, $y, $z + 1 + ($direction2 === self::DIRECTION_PLUSZ ? 2 : 0)), new Vector3($x - 8, $y + 4, $z - 1 + ($direction2 === self::DIRECTION_MINZ ? -2 : 0)), Block::get(Block::SANDSTONE));
-
 				// Other side pattern
-				foreach ([
-							 1,
-							 2,
-							 4
-						 ] as $h) {
+				foreach ([1, 2, 4] as $h) {
 					$this->placeBlock($x + 2, $y + $h, $z + 1, Block::SANDSTONE, 2);
 					$this->placeBlock($x + 2, $y + $h, $z - 1, Block::SANDSTONE, 2);
 					$this->placeBlock($x + 2, $y + $h, $z, Block::STAINED_HARDENED_CLAY, 1);
 				}
-				foreach ([
-							 3,
-							 5
-						 ] as $h) {
+				foreach ([3, 5] as $h) {
 					$this->placeBlock($x + 2, $y + $h, $z - 1, Block::STAINED_HARDENED_CLAY, 1);
 					$this->placeBlock($x + 2, $y + $h, $z + 1, Block::STAINED_HARDENED_CLAY, 1);
 					$this->placeBlock($x + 2, $y + $h, $z, Block::SANDSTONE, 1);
@@ -545,8 +431,7 @@ class Temple extends PopulatorObject {
 				$this->placeBlock($x + 2, $y + 7, $z - 1, Block::SANDSTONE, 2);
 				$this->placeBlock($x + 2, $y + 7, $z, Block::SANDSTONE, 2);
 				$this->placeBlock($x + 2, $y + 7, $z + 1, Block::SANDSTONE, 2);
-				break;
-
+			break;
 			case self::DIRECTION_MINX : // x- (1)
 				// Stairs
 				switch ($direction2) {
@@ -559,19 +444,12 @@ class Temple extends PopulatorObject {
 						$this->placeBlock($x, $y + 1, $z + 1);
 						$this->placeSlab($x, $y + 2, $z + 1);
 						// Pattern
-						foreach ([
-									 1,
-									 2,
-									 4
-								 ] as $h) {
+						foreach ([1, 2, 4] as $h) {
 							$this->placeBlock($x + 1, $y + $h, $z + 2, Block::SANDSTONE, 2);
 							$this->placeBlock($x - 1, $y + $h, $z + 2, Block::SANDSTONE, 2);
 							$this->placeBlock($x, $y + $h, $z + 2, Block::STAINED_HARDENED_CLAY, 1);
 						}
-						foreach ([
-									 3,
-									 5
-								 ] as $h) {
+						foreach ([3, 5] as $h) {
 							$this->placeBlock($x + 1, $y + $h, $z + 2, Block::STAINED_HARDENED_CLAY, 1);
 							$this->placeBlock($x - 1, $y + $h, $z + 2, Block::STAINED_HARDENED_CLAY, 1);
 							$this->placeBlock($x, $y + $h, $z + 2, Block::SANDSTONE, 1);
@@ -582,11 +460,10 @@ class Temple extends PopulatorObject {
 						$this->placeBlock($x - 1, $y + 7, $z + 2, Block::SANDSTONE, 2);
 						$this->placeBlock($x, $y + 7, $z + 2, Block::SANDSTONE, 2);
 						$this->placeBlock($x + 1, $y + 7, $z + 2, Block::SANDSTONE, 2);
-
 						// Building entrance to second floor. //TODO
 						BuildingUtils::fill($this->level, new Vector3($x + 9, $y + 5, $z - 4), new Vector3($x + 7, $y + 7, $z - 5), Block::get(Block::SANDSTONE, 2));
 						BuildingUtils::fill($this->level, new Vector3($x + 8, $y + 5, $z - 4), new Vector3($x + 8, $y + 6, $z - 5), Block::get(Block::AIR));
-						break;
+					break;
 					case self::DIRECTION_MINZ :
 						for ($zz = $z - 1; $zz <= $z; $zz++) {
 							$this->placeBlock($x + 1, $y + 1, $zz);
@@ -596,19 +473,12 @@ class Temple extends PopulatorObject {
 						$this->placeBlock($x, $y + 1, $z - 1);
 						$this->placeSlab($x, $y + 2, $z - 1);
 						// Pattern
-						foreach ([
-									 1,
-									 2,
-									 4
-								 ] as $h) {
+						foreach ([1, 2, 4] as $h) {
 							$this->placeBlock($x + 1, $y + $h, $z - 2, Block::SANDSTONE, 2);
 							$this->placeBlock($x - 1, $y + $h, $z - 2, Block::SANDSTONE, 2);
 							$this->placeBlock($x, $y + $h, $z - 2, Block::STAINED_HARDENED_CLAY, 1);
 						}
-						foreach ([
-									 3,
-									 5
-								 ] as $h) {
+						foreach ([3, 5] as $h) {
 							$this->placeBlock($x + 1, $y + $h, $z - 2, Block::STAINED_HARDENED_CLAY, 1);
 							$this->placeBlock($x - 1, $y + $h, $z - 2, Block::STAINED_HARDENED_CLAY, 1);
 							$this->placeBlock($x, $y + $h, $z - 2, Block::SANDSTONE, 1);
@@ -619,13 +489,11 @@ class Temple extends PopulatorObject {
 						$this->placeBlock($x - 1, $y + 6, $z - 2, Block::SANDSTONE, 2);
 						$this->placeBlock($x, $y + 6, $z - 2, Block::SANDSTONE, 2);
 						$this->placeBlock($x + 1, $y + 6, $z - 2, Block::SANDSTONE, 2);
-
 						// Building entrance to second floor. //TODO
 						BuildingUtils::fill($this->level, new Vector3($x + 9, $y + 5, $z + 4), new Vector3($x + 7, $y + 7, $z + 5), Block::get(Block::SANDSTONE, 2));
 						BuildingUtils::fill($this->level, new Vector3($x + 8, $y + 5, $z + 4), new Vector3($x + 8, $y + 6, $z + 5), Block::get(Block::AIR));
-						break;
+					break;
 				}
-
 				// Finishing stairs system
 				$this->placeBlock($x + 2, $y + 3, $z, Block::SANDSTONE_STAIRS, 0);
 				$this->placeBlock($x + 3, $y + 4, $z, Block::SANDSTONE_STAIRS, 0);
@@ -634,21 +502,13 @@ class Temple extends PopulatorObject {
 				$this->placeBlock($x + 2, $y + 6, $z, Block::AIR);
 				// Making path from stairs to first floor.
 				BuildingUtils::fill($this->level, new Vector3($x + 3, $y, $z + 1 + ($direction2 === self::DIRECTION_PLUSZ ? 2 : 0)), new Vector3($x + 8, $y + 4, $z - 1 + ($direction2 === self::DIRECTION_MINZ ? -2 : 0)), Block::get(Block::SANDSTONE));
-
 				// Other side pattern
-				foreach ([
-							 1,
-							 2,
-							 4
-						 ] as $h) {
+				foreach ([1, 2, 4] as $h) {
 					$this->placeBlock($x - 2, $y + $h, $z + 1, Block::SANDSTONE, 2);
 					$this->placeBlock($x - 2, $y + $h, $z - 1, Block::SANDSTONE, 2);
 					$this->placeBlock($x - 2, $y + $h, $z, Block::STAINED_HARDENED_CLAY, 1);
 				}
-				foreach ([
-							 3,
-							 5
-						 ] as $h) {
+				foreach ([3, 5] as $h) {
 					$this->placeBlock($x - 2, $y + $h, $z - 1, Block::STAINED_HARDENED_CLAY, 1);
 					$this->placeBlock($x - 2, $y + $h, $z + 1, Block::STAINED_HARDENED_CLAY, 1);
 					$this->placeBlock($x - 2, $y + $h, $z, Block::SANDSTONE, 1);
@@ -659,8 +519,7 @@ class Temple extends PopulatorObject {
 				$this->placeBlock($x - 2, $y + 7, $z - 1, Block::SANDSTONE, 2);
 				$this->placeBlock($x - 2, $y + 7, $z, Block::SANDSTONE, 2);
 				$this->placeBlock($x - 2, $y + 7, $z + 1, Block::SANDSTONE, 2);
-				break;
-
+			break;
 			case self::DIRECTION_PLUSZ : // z+ (2)
 				// Stairs
 				switch ($direction2) {
@@ -673,19 +532,12 @@ class Temple extends PopulatorObject {
 						$this->placeBlock($x + 1, $y + 1, $z);
 						$this->placeSlab($x + 1, $y + 2, $z);
 						// Pattern
-						foreach ([
-									 1,
-									 2,
-									 4
-								 ] as $h) {
+						foreach ([1, 2, 4] as $h) {
 							$this->placeBlock($x + 2, $y + $h, $z + 1, Block::SANDSTONE, 2);
 							$this->placeBlock($x + 2, $y + $h, $z - 1, Block::SANDSTONE, 2);
 							$this->placeBlock($x + 2, $y + $h, $z, Block::STAINED_HARDENED_CLAY, 1);
 						}
-						foreach ([
-									 3,
-									 5
-								 ] as $h) {
+						foreach ([3, 5] as $h) {
 							$this->placeBlock($x + 2, $y + $h, $z + 1, Block::STAINED_HARDENED_CLAY, 1);
 							$this->placeBlock($x + 2, $y + $h, $z - 1, Block::STAINED_HARDENED_CLAY, 1);
 							$this->placeBlock($x + 2, $y + $h, $z, Block::SANDSTONE, 1);
@@ -699,7 +551,7 @@ class Temple extends PopulatorObject {
 						// Building entrance to second floor. //TODO
 						BuildingUtils::fill($this->level, new Vector3($x - 4, $y + 5, $z - 9), new Vector3($x - 5, $y + 7, $z - 7), Block::get(Block::SANDSTONE, 2));
 						BuildingUtils::fill($this->level, new Vector3($x - 4, $y + 5, $z - 8), new Vector3($x - 5, $y + 6, $z - 8), Block::get(Block::AIR));
-						break;
+					break;
 					case self::DIRECTION_MINX :
 						for ($xx = $x - 1; $xx <= $x; $xx++) {
 							$this->placeBlock($xx, $y + 1, $z - 1);
@@ -709,19 +561,12 @@ class Temple extends PopulatorObject {
 						$this->placeBlock($x - 1, $y + 1, $z);
 						$this->placeSlab($x - 1, $y + 2, $z);
 						// Pattern
-						foreach ([
-									 1,
-									 2,
-									 4
-								 ] as $h) {
+						foreach ([1, 2, 4] as $h) {
 							$this->placeBlock($x - 2, $y + $h, $z - 1, Block::SANDSTONE, 2);
 							$this->placeBlock($x - 2, $y + $h, $z + 1, Block::SANDSTONE, 2);
 							$this->placeBlock($x - 2, $y + $h, $z, Block::STAINED_HARDENED_CLAY, 1);
 						}
-						foreach ([
-									 3,
-									 5
-								 ] as $h) {
+						foreach ([3, 5] as $h) {
 							$this->placeBlock($x - 2, $y + $h, $z - 1, Block::STAINED_HARDENED_CLAY, 1);
 							$this->placeBlock($x - 2, $y + $h, $z + 1, Block::STAINED_HARDENED_CLAY, 1);
 							$this->placeBlock($x - 2, $y + $h, $z, Block::SANDSTONE, 1);
@@ -735,9 +580,8 @@ class Temple extends PopulatorObject {
 						// Building entrance to second floor. //TODO
 						BuildingUtils::fill($this->level, new Vector3($x + 4, $y + 5, $z - 9), new Vector3($x + 5, $y + 7, $z - 7), Block::get(Block::SANDSTONE, 2));
 						BuildingUtils::fill($this->level, new Vector3($x + 4, $y + 5, $z - 8), new Vector3($x + 5, $y + 6, $z - 8), Block::get(Block::AIR));
-						break;
+					break;
 				}
-
 				// Finishing stairs system
 				$this->placeBlock($x, $y + 3, $z - 2, Block::SANDSTONE_STAIRS, 3);
 				$this->placeBlock($x, $y + 4, $z - 3, Block::SANDSTONE_STAIRS, 3);
@@ -746,21 +590,13 @@ class Temple extends PopulatorObject {
 				$this->placeBlock($x, $y + 6, $z - 2, Block::AIR);
 				// Making path from stairs to first floor.
 				BuildingUtils::fill($this->level, new Vector3($x + 1 + ($direction2 === self::DIRECTION_PLUSX ? 2 : 0), $y, $z - 3), new Vector3($x - 1 + ($direction2 === self::DIRECTION_MINX ? -2 : 0), $y + 4, $z - 8), Block::get(Block::SANDSTONE));
-
 				// Other side pattern
-				foreach ([
-							 1,
-							 2,
-							 4
-						 ] as $h) {
+				foreach ([1, 2, 4] as $h) {
 					$this->placeBlock($x + 1, $y + $h, $z + 2, Block::SANDSTONE, 2);
 					$this->placeBlock($x - 1, $y + $h, $z + 2, Block::SANDSTONE, 2);
 					$this->placeBlock($x, $y + $h, $z + 2, Block::STAINED_HARDENED_CLAY, 1);
 				}
-				foreach ([
-							 3,
-							 5
-						 ] as $h) {
+				foreach ([3, 5] as $h) {
 					$this->placeBlock($x + 1, $y + $h, $z + 2, Block::STAINED_HARDENED_CLAY, 1);
 					$this->placeBlock($x - 1, $y + $h, $z + 2, Block::STAINED_HARDENED_CLAY, 1);
 					$this->placeBlock($x, $y + $h, $z + 2, Block::SANDSTONE, 1);
@@ -771,8 +607,7 @@ class Temple extends PopulatorObject {
 				$this->placeBlock($x - 1, $y + 7, $z + 2, Block::SANDSTONE, 2);
 				$this->placeBlock($x, $y + 7, $z + 2, Block::SANDSTONE, 2);
 				$this->placeBlock($x + 1, $y + 7, $z + 2, Block::SANDSTONE, 2);
-				break;
-
+			break;
 			case self::DIRECTION_MINZ : // z- (3)
 				// Stairs
 				switch ($direction2) {
@@ -785,19 +620,12 @@ class Temple extends PopulatorObject {
 						$this->placeBlock($x + 1, $y + 1, $z);
 						$this->placeSlab($x + 1, $y + 2, $z);
 						// Pattern
-						foreach ([
-									 1,
-									 2,
-									 4
-								 ] as $h) {
+						foreach ([1, 2, 4] as $h) {
 							$this->placeBlock($x + 2, $y + $h, $z + 1, Block::SANDSTONE, 2);
 							$this->placeBlock($x + 2, $y + $h, $z - 1, Block::SANDSTONE, 2);
 							$this->placeBlock($x + 2, $y + $h, $z, Block::STAINED_HARDENED_CLAY, 1);
 						}
-						foreach ([
-									 3,
-									 5
-								 ] as $h) {
+						foreach ([3, 5] as $h) {
 							$this->placeBlock($x + 2, $y + $h, $z + 1, Block::STAINED_HARDENED_CLAY, 1);
 							$this->placeBlock($x + 2, $y + $h, $z - 1, Block::STAINED_HARDENED_CLAY, 1);
 							$this->placeBlock($x + 2, $y + $h, $z, Block::SANDSTONE, 1);
@@ -811,7 +639,7 @@ class Temple extends PopulatorObject {
 						// Building entrance to second floor. //TODO
 						BuildingUtils::fill($this->level, new Vector3($x - 4, $y + 5, $z + 9), new Vector3($x - 5, $y + 7, $z + 7), Block::get(Block::SANDSTONE, 2));
 						BuildingUtils::fill($this->level, new Vector3($x - 4, $y + 5, $z + 8), new Vector3($x - 5, $y + 6, $z + 8), Block::get(Block::AIR));
-						break;
+					break;
 					case self::DIRECTION_MINX :
 						for ($xx = $x - 1; $xx <= $x; $xx++) {
 							$this->placeBlock($xx, $y + 1, $z + 1);
@@ -821,19 +649,12 @@ class Temple extends PopulatorObject {
 						$this->placeBlock($x - 1, $y + 1, $z);
 						$this->placeSlab($x - 1, $y + 2, $z);
 						// Pattern
-						foreach ([
-									 1,
-									 2,
-									 4
-								 ] as $h) {
+						foreach ([1, 2, 4] as $h) {
 							$this->placeBlock($x - 2, $y + $h, $z - 1, Block::SANDSTONE, 2);
 							$this->placeBlock($x - 2, $y + $h, $z + 1, Block::SANDSTONE, 2);
 							$this->placeBlock($x - 2, $y + $h, $z, Block::STAINED_HARDENED_CLAY, 1);
 						}
-						foreach ([
-									 3,
-									 5
-								 ] as $h) {
+						foreach ([3, 5] as $h) {
 							$this->placeBlock($x - 2, $y + $h, $z - 1, Block::STAINED_HARDENED_CLAY, 1);
 							$this->placeBlock($x - 2, $y + $h, $z + 1, Block::STAINED_HARDENED_CLAY, 1);
 							$this->placeBlock($x - 2, $y + $h, $z, Block::SANDSTONE, 1);
@@ -847,9 +668,8 @@ class Temple extends PopulatorObject {
 						// Building entrance to second floor. //TODO
 						BuildingUtils::fill($this->level, new Vector3($x + 4, $y + 5, $z + 9), new Vector3($x + 5, $y + 7, $z + 7), Block::get(Block::SANDSTONE, 2));
 						BuildingUtils::fill($this->level, new Vector3($x + 4, $y + 5, $z + 8), new Vector3($x + 5, $y + 6, $z + 8), Block::get(Block::AIR));
-						break;
+					break;
 				}
-
 				// Finishing stairs system
 				$this->placeBlock($x, $y + 3, $z + 2, Block::SANDSTONE_STAIRS, 2);
 				$this->placeBlock($x, $y + 4, $z + 3, Block::SANDSTONE_STAIRS, 2);
@@ -858,21 +678,13 @@ class Temple extends PopulatorObject {
 				$this->placeBlock($x, $y + 6, $z + 2, Block::AIR);
 				// Making path from stairs to first floor.
 				BuildingUtils::fill($this->level, new Vector3($x + 1 + ($direction2 === self::DIRECTION_PLUSX ? 2 : 0), $y, $z + 3), new Vector3($x - 1 + ($direction2 === self::DIRECTION_MINX ? -2 : 0), $y + 4, $z + 8), Block::get(Block::SANDSTONE));
-
 				// Other side pattern
-				foreach ([
-							 1,
-							 2,
-							 4
-						 ] as $h) {
+				foreach ([1, 2, 4] as $h) {
 					$this->placeBlock($x + 1, $y + $h, $z - 2, Block::SANDSTONE, 2);
 					$this->placeBlock($x - 1, $y + $h, $z - 2, Block::SANDSTONE, 2);
 					$this->placeBlock($x, $y + $h, $z - 2, Block::STAINED_HARDENED_CLAY, 1);
 				}
-				foreach ([
-							 3,
-							 5
-						 ] as $h) {
+				foreach ([3, 5] as $h) {
 					$this->placeBlock($x + 1, $y + $h, $z - 2, Block::STAINED_HARDENED_CLAY, 1);
 					$this->placeBlock($x - 1, $y + $h, $z - 2, Block::STAINED_HARDENED_CLAY, 1);
 					$this->placeBlock($x, $y + $h, $z - 2, Block::SANDSTONE, 1);
@@ -883,9 +695,8 @@ class Temple extends PopulatorObject {
 				$this->placeBlock($x - 1, $y + 7, $z - 2, Block::SANDSTONE, 2);
 				$this->placeBlock($x, $y + 7, $z - 2, Block::SANDSTONE, 2);
 				$this->placeBlock($x + 1, $y + 7, $z - 2, Block::SANDSTONE, 2);
-				break;
+			break;
 		}
-
 		// Making top
 		BuildingUtils::top($this->level, new Vector3($x - 1, $y + 9, $z - 1), new Vector3($x + 1, $y, $z + 1), Block::get(Block::SANDSTONE));
 		$this->placeBlock($x - 2, $y + 9, $z, Block::SANDSTONE_STAIRS, 0);
@@ -920,19 +731,19 @@ class Temple extends PopulatorObject {
 		switch ($direction) {
 			case self::DIRECTION_PLUSX : // x+ (0)
 				return self::DIRECTION_MINX;
-				break;
+			break;
 			case self::DIRECTION_MINX : // x- (1)
 				return self::DIRECTION_PLUSX;
-				break;
+			break;
 			case self::DIRECTION_PLUSZ : // z+ (2)
 				return self::DIRECTION_MINZ;
-				break;
+			break;
 			case self::DIRECTION_MINZ : // z- (3)
 				return self::DIRECTION_PLUSZ;
-				break;
+			break;
 			default :
 				return -1;
-				break;
+			break;
 		}
 	}
 }
