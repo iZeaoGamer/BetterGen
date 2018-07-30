@@ -61,6 +61,22 @@ class Main extends PluginBase implements Listener {
 	}
 
 	/**
+	 * Places a looting chest block and creates the corresponding tile
+	 *
+	 * @param Block $block
+	 * @param string $lootfile
+	 */
+	static public function placeLootChest(Block $block, string $lootfile) {
+		$block->getLevel()->setBlock($block, $block, true);
+		$nbt = Chest::createNBT($block);
+		$nbt->setString("generateLoot", $lootfile);
+		/** @var Chest|null $tile */
+		$tile = Chest::createTile(Chest::CHEST, $block->getLevel(), $nbt);
+		$tile->generateLoot = true;
+		$tile->spawnToAll();
+	}
+
+	/**
 	 * Called when the plugin enales
 	 *
 	 * @return void
@@ -273,14 +289,15 @@ class Main extends PluginBase implements Listener {
 				for($z = 0; $z < 16; $z++) {
 					for($y = 0; $y <= Level::Y_MAX; $y++) {
 						$id = $chunk->getBlockId($x, $y, $z);
-						/** @var \pocketmine\tile\Chest $tile */
+						/** @var \pocketmine\tile\Chest|null $tile */
 						$tile = $chunk->getTile($x, $y, $z);
 						if($id === Block::CHEST and $tile === null) {
 							/** @var Chest $tile */
-							$tile = Tile::createTile(Tile::CHEST, $event->getLevel(), Chest::createNBT($pos = new Vector3($chunk->getX() * 16 + $x, $y, $chunk->getZ() * 16 + $z), null)); //TODO: set face correctly
-							$table = new LootTable($config = new Config($this->getDataFolder().'addon\\'.$tile->generateLoot.'.json', Config::DETECT, []));
+							Tile::createTile(Tile::CHEST, $event->getLevel(), Chest::createNBT(new Vector3($chunk->getX() * 16 + $x, $y, $chunk->getZ() * 16 + $z))); //TODO: set face correctly
+						}elseif($id === Block::CHEST) {
+							$table = new LootTable(new Config($this->getDataFolder().'addon'.DIRECTORY_SEPARATOR.$tile->generateLoot.'.json', Config::JSON, []));
 							$size = $tile->getInventory()->getSize();
-							$loot = $table->getRandomLoot(null);
+							$loot = $table->getRandomLoot();
 							$items = array_pad($loot, $size, Item::get(Item::AIR));
 							shuffle($items);
 							$tile->getInventory()->setContents($items);
