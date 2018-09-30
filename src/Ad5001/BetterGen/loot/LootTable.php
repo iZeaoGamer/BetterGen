@@ -68,7 +68,7 @@ class LootTable {
 	public static function buildLootTable(Vector3 $place, int $type, Random $random) {
 		if($place->y < 1) return; // Making sure sometimes that it doesn't write for nothing
 		$cfg = new Config(self::getPluginFolder() . "processingLoots.json", Config::JSON);
-		$lootsFromJson = json_decode(file_get_contents(self::getResourcesFolder() . "loots/" . self::LOOT_NAMES[$type] . ".json"), true);
+		$lootsFromJson = json_decode(file_get_contents("loots/" . self::LOOT_NAMES[$type] . ".json"), true);
 		$loots =[];
 		foreach($lootsFromJson as $loot) {
 			if(is_array($loot) && $random->nextBoundedInt(101) < $loot["percentage"])
@@ -119,13 +119,5 @@ class LootTable {
 	 */
 	public static function getPluginFolder(): string {
 		return getcwd().DIRECTORY_SEPARATOR."plugin_data".DIRECTORY_SEPARATOR."BetterGen".DIRECTORY_SEPARATOR;
-	}
-	
-	/**
-	 * Returns the resources folder.
-	 * @return string
-	 */
-	public static function getResourcesFolder(): string {
-		return self::getPluginFolder() . "resources" . DIRECTORY_SEPARATOR;
 	}
 }
