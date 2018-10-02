@@ -46,7 +46,7 @@ class CactusPopulator extends AmountPopulator {
 	 *
 	 * @return void
 	 */
-	public function populate(ChunkManager $level, $chunkX, $chunkZ, Random $random) {
+	public function populate(ChunkManager $level, int $chunkX, int $chunkZ, Random $random) : void {
 		$this->level = $level;
 		$amount = $this->getAmount($random);
 		$cactus = new Cactus ();
@@ -68,7 +68,7 @@ class CactusPopulator extends AmountPopulator {
 	 *
 	 * @return int
 	 */
-	protected function getHighestWorkableBlock($x, $z) {
+	protected function getHighestWorkableBlock(int $x, int $z) : int {
 		for($y = Level::Y_MAX - 1; $y >= 0; --$y) {
 			$b = $this->level->getBlockIdAt($x, $y, $z);
 			if ($b !== Block::AIR and $b !== Block::LEAVES and $b !== Block::LEAVES2) {
