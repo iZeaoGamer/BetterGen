@@ -34,7 +34,7 @@ class BushPopulator extends AmountPopulator {
 	 *
 	 * @param int $type
 	 */
-	public function __construct($type = 0) {
+	public function __construct(int $type = 0) {
 		$this->type = $type;
 	}
 
@@ -48,7 +48,7 @@ class BushPopulator extends AmountPopulator {
 	 *
 	 * @return void
 	 */
-	public function populate(ChunkManager $level, $chunkX, $chunkZ, Random $random) {
+	public function populate(ChunkManager $level, int $chunkX, int $chunkZ, Random $random) : void {
 		$this->level = $level;
 		$amount = $this->getAmount($random);
 		for($i = 0; $i < $amount; $i++) {
@@ -72,7 +72,7 @@ class BushPopulator extends AmountPopulator {
 	 *
 	 * @return int
 	 */
-	protected function getHighestWorkableBlock($x, $z) {
+	protected function getHighestWorkableBlock(int $x, int $z) : int {
 		for($y = Level::Y_MAX - 1; $y > 0; --$y) {
 			$b = $this->level->getBlockIdAt($x, $y, $z);
 			if ($b === Block::DIRT or $b === Block::GRASS or $b === Block::PODZOL) {
