@@ -56,7 +56,7 @@ class Main extends PluginBase implements Listener {
 	 *
 	 * @return void
 	 */
-	public static function registerBiome(int $id, Biome $biome) {
+	public static function registerBiome(int $id, Biome $biome) : void {
 		BetterNormal::registerBiome($biome);
 	}
 
@@ -79,7 +79,7 @@ class Main extends PluginBase implements Listener {
 	 *
 	 * @return void
 	 */
-	public function onEnable() {
+	public function onEnable() : void {
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 		GeneratorManager::addGenerator(BetterNormal::class, "betternormal");
 		if ($this->isOtherNS()) $this->getLogger()->warning("Tesseract detected. Note that Tesseract is not up to date with the generation structure and some generation features may be limited or not working");
@@ -111,7 +111,7 @@ class Main extends PluginBase implements Listener {
 	 *
 	 * @return bool
 	 */
-	public function onCommand(CommandSender $sender, Command $cmd, $label, array $args): bool {
+	public function onCommand(CommandSender $sender, Command $cmd, string $label, array $args): bool {
 		switch ($cmd->getName()) {
 			case "createworld": // /createworld <name> [generator = betternormal] [seed = rand()] [options(json)]
 				switch (count($args)) {
