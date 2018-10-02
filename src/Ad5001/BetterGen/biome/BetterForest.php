@@ -39,7 +39,7 @@ class BetterForest extends ForestBiome implements Mountainable {
 	 * @param int $type = 0
 	 * @param array $infos
 	 */
-	public function __construct($type = 0, array $infos = [0.6, 0.5]) {
+	public function __construct(int $type = 0, array $infos = [0.6, 0.5]) {
 		parent::__construct($type);
 		$this->clearPopulators();
 		$this->type = $type;
