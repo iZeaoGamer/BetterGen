@@ -50,7 +50,7 @@ abstract class AmountPopulator extends Populator {
 	 *
 	 * @return int
 	 */
-	public function getAmount(Random $random) {
+	public function getAmount(Random $random) : int {
 		return $this->baseAmount + $random->nextRange(0, $this->randomAmount + 1);
 	}
 
