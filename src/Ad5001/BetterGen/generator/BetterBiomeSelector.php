@@ -54,7 +54,7 @@ class BetterBiomeSelector extends BiomeSelector {
 	 *
 	 * @return void
 	 */
-	public function recalculate() {
+	public function recalculate() : void {
 	} // Using our own system, No need for that
 
 	/**
@@ -66,7 +66,7 @@ class BetterBiomeSelector extends BiomeSelector {
 	 *
 	 * @return void
 	 */
-	public function addBiome(Biome $biome) {
+	public function addBiome(Biome $biome) : void {
 		$this->biomes[$biome->getId()] = $biome;
 	}
 
@@ -78,7 +78,7 @@ class BetterBiomeSelector extends BiomeSelector {
 	 *
 	 * @return float|int
 	 */
-	public function getTemperature($x, $z) {
+	public function getTemperature(int $x, int $z) : float {
 		return ($this->temperature->noise2D($x, $z, true) + 1) / 2;
 	}
 
@@ -90,7 +90,7 @@ class BetterBiomeSelector extends BiomeSelector {
 	 *
 	 * @return float|int
 	 */
-	public function getRainfall($x, $z) {
+	public function getRainfall(int $x, int $z) : float {
 		return ($this->rainfall->noise2D($x, $z, true) + 1) / 2;
 	}
 
@@ -102,7 +102,7 @@ class BetterBiomeSelector extends BiomeSelector {
 	 *
 	 * @return Biome
 	 */
-	public function pickBiome($x, $z) : Biome {
+	public function pickBiome(int $x, int $z) : Biome {
 		$temperature = ($this->getTemperature($x, $z));
 		$rainfall = ($this->getRainfall($x, $z));
 
