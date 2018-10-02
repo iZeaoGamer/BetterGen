@@ -94,7 +94,7 @@ class BetterNormal extends Generator {
 	 *
 	 * @return Biome
 	 */
-	public function pickBiome($x, $z) : Biome {
+	public function pickBiome(int $x, int $z) : Biome {
 		$hash = $x * 2345803 ^ $z * 9236449 ^ $this->level->getSeed();
 		$hash *= $hash + 223;
 		$xNoise = $hash >> 20 & 3;
@@ -232,7 +232,7 @@ class BetterNormal extends Generator {
 	 *
 	 * @return null|Biome
 	 */
-	public static function getBiome($temperature, $rainfall) {
+	public static function getBiome(float $temperature, float $rainfall) : Biome {
 		$ret = null;
 		if(!isset(self::$biomes[( string) round($rainfall, 1)])) {
 			while(!isset(self::$biomes[( string) round($rainfall, 1)])) {
@@ -278,7 +278,7 @@ class BetterNormal extends Generator {
 	 * @param int $chunkX
 	 * @param int $chunkZ
 	 */
-	public function generateChunk($chunkX, $chunkZ) : void {
+	public function generateChunk(int $chunkX, int $chunkZ) : void {
 
 		$this->random->setSeed(0xdeadbeef ^ ($chunkX << 8) ^ $chunkZ ^ $this->level->getSeed());
 		$noise = $this->noiseBase->getFastNoise3D(16, 128, 16, 4, 8, 4, $chunkX * 16, 0, $chunkZ * 16);
@@ -351,7 +351,7 @@ class BetterNormal extends Generator {
 	 * @param int $chunkZ
 	 * @return void
 	 */
-	public function populateChunk($chunkX, $chunkZ) : void {
+	public function populateChunk(int $chunkX, int $chunkZ) : void {
 		$this->random->setSeed(0xdeadbeef ^ ($chunkX << 8) ^ $chunkZ ^ $this->level->getSeed());
 		foreach($this->populators as $populator) {
 			$populator->populate($this->level, $chunkX, $chunkZ, $this->random);
@@ -458,7 +458,7 @@ class BetterNormal extends Generator {
 	 *
 	 * @return int
 	 */
-	protected function getHighestWorkableBlock($x, $z) {
+	protected function getHighestWorkableBlock(int $x, int $z) : int {
 		for($y = Level::Y_MAX - 1; $y > 0; -- $y) {
 			$b = $this->level->getBlockIdAt($x, $y, $z);
 			if ($b === Block::DIRT or $b === Block::GRASS or $b === Block::PODZOL) {
