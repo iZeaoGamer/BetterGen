@@ -1,5 +1,5 @@
-## This repository was moved to [git.ad5001.eu](https://git.ad5001.eu/Ad5001/BetterGen)
-<img src="https://raw.githubusercontent.com/Ad5001/BetterGen/master/imgs/banner.png"></img>     
+## This project has been taken over by VMPE Development Team
+We will try our very best to update this plugin to the latest API's.
 <center><h1>PocketMine's Tomorrow's World Generator.</h1></center>
 Welcome user to the home of a new PocketMine World Generator which features 9 new/modified biomes:
 
