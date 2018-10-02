@@ -35,7 +35,7 @@ class BuildingUtils {
 	 *
 	 * @return void
 	 */
-	public static function fill(ChunkManager $level, Vector3 $pos1, Vector3 $pos2, Block $block = null) {
+	public static function fill(ChunkManager $level, Vector3 $pos1, Vector3 $pos2, Block $block = null) : void {
 		if($block == null)
 			$block = Block::get(Block::AIR);
 		list($pos1, $pos2) = self::minmax($pos1, $pos2);
@@ -60,7 +60,7 @@ class BuildingUtils {
 	 *
 	 * @return void
 	 */
-	public static function fillRandom(ChunkManager $level, Vector3 $pos1, Vector3 $pos2, Block $block = null, Random $random = null, $randMax = 3) {
+	public static function fillRandom(ChunkManager $level, Vector3 $pos1, Vector3 $pos2, Block $block = null, Random $random = null, $randMax = 3) : void{
 		if($block == null)
 			$block = Block::get(Block::AIR);
 		list($pos1, $pos2) = self::minmax($pos1, $pos2);
@@ -82,7 +82,7 @@ class BuildingUtils {
 	 * @param array $params
 	 * @return array
 	 */
-	public static function fillCallback(Vector3 $pos1, Vector3 $pos2, callable $call, ...$params) : array {
+	public static function fillCallback(Vector3 $pos1, Vector3 $pos2, callable $call, array $params) : array {
 		list($pos1, $pos2) = self::minmax($pos1, $pos2);
 		$return = [];
 		for($x = $pos1->x; $x >= $pos2->x; $x--)
@@ -103,7 +103,7 @@ class BuildingUtils {
 	 *
 	 * @return void
 	 */
-	public static function walls(ChunkManager $level, Vector3 $pos1, Vector3 $pos2, Block $block) {
+	public static function walls(ChunkManager $level, Vector3 $pos1, Vector3 $pos2, Block $block) : void {
 		list($pos1, $pos2) = self::minmax($pos1, $pos2);
 		for($y = $pos1->y; $y >= $pos2->y; $y--) {
 			for($x = $pos1->x; $x >= $pos2->x; $x--) {
@@ -131,7 +131,7 @@ class BuildingUtils {
 	 *
 	 * @return void
 	 */
-	public static function top(ChunkManager $level, Vector3 $pos1, Vector3 $pos2, Block $block) {
+	public static function top(ChunkManager $level, Vector3 $pos1, Vector3 $pos2, Block $block) : void {
 		list($pos1, $pos2) = self::minmax($pos1, $pos2);
 		for($x = $pos1->x; $x >= $pos2->x; $x--)
 			for($z = $pos1->z; $z >= $pos2->z; $z--) {
@@ -149,7 +149,7 @@ class BuildingUtils {
 	 * @param Block $block
 	 * @return void
 	 */
-	public static function corners(ChunkManager $level, Vector3 $pos1, Vector3 $pos2, Block $block) {
+	public static function corners(ChunkManager $level, Vector3 $pos1, Vector3 $pos2, Block $block) : void{
 		list($pos1, $pos2) = self::minmax($pos1, $pos2);
 		for($y = $pos1->y; $y >= $pos2->y; $y--) {
 			$level->setBlockIdAt($pos1->x, $y, $pos1->z, $block->getId());
@@ -172,7 +172,7 @@ class BuildingUtils {
 	 * @param Block $block
 	 * @return void
 	 */
-	public static function bottom(ChunkManager $level, Vector3 $pos1, Vector3 $pos2, Block $block) {
+	public static function bottom(ChunkManager $level, Vector3 $pos1, Vector3 $pos2, Block $block) : void {
 		list($pos1, $pos2) = self::minmax($pos1, $pos2);
 		for($x = $pos1->x; $x >= $pos2->x; $x--)
 			for($z = $pos1->z; $z >= $pos2->z; $z--) {
@@ -191,7 +191,7 @@ class BuildingUtils {
 	 * @param Block $block
 	 * @return void
 	 */
-	public static function buildRandom(ChunkManager $level, Vector3 $pos, Vector3 $infos, Random $random, Block $block) {
+	public static function buildRandom(ChunkManager $level, Vector3 $pos, Vector3 $infos, Random $random, Block $block) : void {
 		$xBounded = $random->nextBoundedInt(3) - 1;
 		$yBounded = $random->nextBoundedInt(3) - 1;
 		$zBounded = $random->nextBoundedInt(3) - 1;
